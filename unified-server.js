@@ -5,8 +5,7 @@ const crypto = require('crypto');
 const zlib = require('zlib');
 const { AdLiftrService } = require('./lib/adliftr/AdLiftrService');
 
-const ROOT = __dirname;
-const PORT = Number(process.env.DECOLA_PORT || 4200);
+const ROOT = __dirname;const PORT = Number(process.env.PORT || process.env.DECOLA_PORT || 4200);
 const DATA = path.join(ROOT, 'unified-data.json');
 const adliftr = new AdLiftrService();
 const esc = (v = '') => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
