@@ -1,0 +1,12 @@
+{
+  "name": "sistema-decola-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema Decola 1.0 e Central de Tráfego",
+  "scripts": {
+    "start": "node unified-server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

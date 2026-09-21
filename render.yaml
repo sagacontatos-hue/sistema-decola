@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: sistema-decola
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DECOLA_AUTH_CODE
+        sync: false
+      - key: ADLIFTR_API_KEY
+        sync: false
+      - key: ADLIFTR_API_URL
+        sync: false

@@ -1,0 +1,78 @@
+{
+  "clients": [
+    {
+      "id": "burger-mania",
+      "name": "Burger Mania",
+      "segment": "Hamburgueria",
+      "city": "São Paulo",
+      "state": "SP",
+      "owner": "Ana Decola",
+      "status": "Em acompanhamento",
+      "goal": "Aumentar ticket médio e frequência de compra.",
+      "onboarding": "A Burger Mania quer ser a hamburgueria mais lembrada do bairro. O Smash Bacon é o produto principal. A equipe quer aumentar o ticket e voltar a falar com quem já comprou.",
+      "files": [
+        {
+          "name": "vendas-agosto.csv",
+          "type": "Vendas",
+          "source": "Cardápio Web",
+          "period": "Ago/2026",
+          "rows": 1761
+        }
+      ],
+      "stats": {
+        "revenue": 84200,
+        "orders": 1761,
+        "ticket": 47.8
+      },
+      "plan": [
+        {
+          "title": "Criar 3 criativos focados no Smash Bacon",
+          "pillar": "Conteúdo",
+          "meta": "Semana 1 · participação do produto nos pedidos",
+          "done": false
+        },
+        {
+          "title": "Testar adicional no fluxo de compra",
+          "pillar": "Cardápio",
+          "meta": "Semana 2 · taxa de pedidos com adicional",
+          "done": false
+        }
+      ],
+      "startedAt": "2026-08-04"
+    },
+    {
+      "id": "wonderland--1789852368682",
+      "name": "Wonderland ",
+      "segment": "Hamburgueria ",
+      "city": "Araguari",
+      "state": "MG",
+      "owner": "Equipe Decola",
+      "status": "Em onboarding",
+      "goal": "Aumentar o numero de vendas dentro do canal próprio ",
+      "onboarding": "",
+      "files": [
+        {
+          "name": "relatorio_vendas_01_08_2026_31_08_2026.csv",
+          "type": "Vendas",
+          "source": "Brendi",
+          "period": "Agosto/ 2026",
+          "rows": 58
+        },
+        {
+          "name": "relatorio_vendas_21_06_2026_19_09_2026.csv",
+          "type": "Vendas",
+          "source": "Brendi",
+          "period": "21/06 atÃ© 19/09",
+          "rows": 92
+        }
+      ],
+      "stats": {
+        "revenue": 0,
+        "orders": 0,
+        "ticket": 0
+      },
+      "plan": [],
+      "startedAt": "2026-07-04"
+    }
+  ]
+}
