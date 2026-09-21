@@ -1,41 +1,5 @@
 {
-  "clients": [
-    {
-      "id": "4d46d86f-1c2a-44ea-be39-524b61e681bb",
-      "name": "Wonderland",
-      "segment": "Hamburger ",
-      "city": "Araguari",
-      "state": "MG",
-      "owner": "A definir",
-      "startedAt": "2026-07-09",
-      "goal": "Aumentar as vendas do cardápio próprio ",
-      "onboarding": {
-        "notes": ""
-      },
-      "imports": [
-        {
-          "id": "9331eba1-b212-4880-b20e-6b1c7434ce7d",
-          "name": "relatorio_vendas_21_06_2026_19_09_2026.csv",
-          "type": "Vendas",
-          "period": "",
-          "status": "Importado, mas sem produtos identificados",
-          "uploadedAt": "2026-09-20T22:55:50.185Z"
-        }
-      ],
-      "products": [],
-      "menuImages": [],
-      "instagramImages": [],
-      "plan": [],
-      "adAccounts": [],
-      "logo": "",
-      "brandName": "Wonderland",
-      "instagram": "",
-      "site": "",
-      "status": "Ativo",
-      "observations": "",
-      "contentPosts": []
-    }
-  ],
+  "clients": [],
   "campaigns": [],
   "creatives": [],
   "automations": [],
