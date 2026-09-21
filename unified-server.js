@@ -5,7 +5,8 @@ const crypto = require('crypto');
 const zlib = require('zlib');
 const { AdLiftrService } = require('./lib/adliftr/AdLiftrService');
 
-const ROOT = __dirname;const PORT = Number(process.env.PORT || process.env.DECOLA_PORT || 4200);
+const ROOT = __dirname;
+const PORT = Number(process.env.DECOLA_PORT || 4200);
 const DATA = path.join(ROOT, 'unified-data.json');
 const adliftr = new AdLiftrService();
 const esc = (v = '') => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -31,6 +32,33 @@ function csv(text){const split=s=>{let a=[],v='',q=false;for(const c of s){if(c=
 const xml = value => String(value||'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(n));
 function zipEntries(buffer){const end=buffer.lastIndexOf(Buffer.from([0x50,0x4b,0x05,0x06]));if(end<0)throw Error('XLSX/DOCX inválido.');let offset=buffer.readUInt32LE(end+16),out={};while(offset<buffer.length&&buffer.readUInt32LE(offset)===0x02014b50){const method=buffer.readUInt16LE(offset+10),size=buffer.readUInt32LE(offset+20),nameLen=buffer.readUInt16LE(offset+28),extra=buffer.readUInt16LE(offset+30),comment=buffer.readUInt16LE(offset+32),local=buffer.readUInt32LE(offset+42),name=buffer.subarray(offset+46,offset+46+nameLen).toString(),localName=buffer.readUInt16LE(local+26),localExtra=buffer.readUInt16LE(local+28),raw=buffer.subarray(local+30+localName+localExtra,local+30+localName+localExtra+size);out[name]=(method===8?zlib.inflateRawSync(raw):raw).toString('utf8');offset+=46+nameLen+extra+comment;}return out;}
 function xlsx(buffer){const entries=zipEntries(buffer),shared=[...(entries['xl/sharedStrings.xml']||'').matchAll(/<si[^>]*>([\s\S]*?)<\/si>/g)].map(x=>xml(x[1].replace(/<[^>]+>/g,''))),sheet=entries[Object.keys(entries).find(k=>/^xl\/worksheets\/sheet\d+\.xml$/.test(k))];if(!sheet)throw Error('A planilha não possui uma aba legível.');const all=[];for(const row of sheet.matchAll(/<row[^>]*>([\s\S]*?)<\/row>/g)){const values=[];for(const cell of row[1].matchAll(/<c([^>]*)>([\s\S]*?)<\/c>/g)){const ref=/r="([A-Z]+)\d+"/.exec(cell[1])?.[1]||'A',col=ref.split('').reduce((n,x)=>n*26+x.charCodeAt(0)-64,0)-1,raw=/<v[^>]*>([\s\S]*?)<\/v>/.exec(cell[2])?.[1]||'';values[col]=/t="s"/.test(cell[1])?shared[Number(raw)]||'':xml(raw);}all.push(values);}const headers=(all.shift()||[]).map(String);return{headers,rows:all.filter(r=>r.some(v=>v!==undefined&&v!=='')).map(r=>Object.fromEntries(headers.map((h,i)=>[h,String(r[i]??'')])))};}
+// Compatibilidade com planilhas que usam strings inline (formato comum em exportações de delivery).
+function xlsx(buffer){
+  const entries=zipEntries(buffer);
+  const shared=[...(entries['xl/sharedStrings.xml']||'').matchAll(/<si[^>]*>([\s\S]*?)<\/si>/g)]
+    .map(x=>xml(x[1].replace(/<t[^>]*>([\s\S]*?)<\/t>/g,'$1').replace(/<[^>]+>/g,'')));
+  const sheet=entries[Object.keys(entries).find(k=>/^xl\/worksheets\/sheet\d+\.xml$/.test(k))];
+  if(!sheet)throw Error('A planilha não possui uma aba legível.');
+  const all=[];
+  for(const row of sheet.matchAll(/<row[^>]*>([\s\S]*?)<\/row>/g)){
+    const values=[];
+    for(const cell of row[1].matchAll(/<c([^>]*)>([\s\S]*?)<\/c>/g)){
+      const ref=/r="([A-Z]+)\d+"/.exec(cell[1])?.[1]||'A';
+      const col=ref.split('').reduce((n,x)=>n*26+x.charCodeAt(0)-64,0)-1;
+      const body=cell[2];
+      const raw=/<v[^>]*>([\s\S]*?)<\/v>/.exec(body)?.[1]||'';
+      let value;
+      if(/t="inlineStr"/.test(cell[1])){
+        const inline=/<is[^>]*>([\s\S]*?)<\/is>/.exec(body)?.[1]||'';
+        value=xml(inline.replace(/<t[^>]*>([\s\S]*?)<\/t>/g,'$1').replace(/<[^>]+>/g,''));
+      }else value=/t="s"/.test(cell[1])?shared[Number(raw)]||'':xml(raw);
+      values[col]=value;
+    }
+    all.push(values);
+  }
+  const headers=(all.shift()||[]).map(String);
+  return {headers,rows:all.filter(r=>r.some(v=>v!==undefined&&v!=='')).map(r=>Object.fromEntries(headers.map((h,i)=>[h,String(r[i]??'')]))) };
+}
 function docxText(buffer){const raw=zipEntries(buffer)['word/document.xml'];if(!raw)throw Error('Documento DOCX sem conteúdo legível.');return xml(raw.replace(/<w:tab[^>]*\/>/g,'\t').replace(/<\/w:p>/g,'\n').replace(/<[^>]+>/g,'')).replace(/\n{3,}/g,'\n\n').trim();}
 const redirect=(res,url)=>{res.writeHead(303,{Location:url});res.end();};
 
